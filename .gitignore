@@ -1,2 +1,4 @@
 node_modules
 *.env
+public/style.sass
+public/style.css.map
