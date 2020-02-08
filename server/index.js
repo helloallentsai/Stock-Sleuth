@@ -46,11 +46,13 @@ app.get('/stocks/:stock', (req, res) => {
           symbol: stock,
           prices
         };
-
+        console.log(bank);
+        console.log(bank[stock]);
         const result = bank[stock];
         return result;
       })
-      .then(data => res.status(200).send(data));
+      .then(data => res.status(200).send(data))
+      .catch(err => res.status(400).send(err));
   } else {
     console.log('cached');
   }
