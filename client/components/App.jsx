@@ -6,7 +6,7 @@ import Stocks from './Stocks';
 
 const App = () => {
   const [stocks, setStocks] = useState([]);
-  const [stock, setStock] = useState('');
+  const [stock, setStock] = useState('AAPL');
   const [chartIdx, setChartIdx] = useState(0);
 
   useEffect(() => {
@@ -22,11 +22,12 @@ const App = () => {
 
   return (
     <div>
-      <h1>Stock Sleuth</h1>
-
+      <div id="header">
+        <h1>Stock Sleuth</h1>
+      </div>
       <Form setStock={setStock} />
+      <Stocks stocks={stocks} setChartIdx={setChartIdx} />
       {stocks.length > 0 && <Chart stock={stocks[chartIdx]} />}
-      <Stocks stocks={stocks} />
     </div>
   );
 };

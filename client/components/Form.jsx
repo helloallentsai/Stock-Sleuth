@@ -5,14 +5,19 @@ const Form = ({ setStock }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    setStock(input);
+    setStock(input.toUpperCase());
     setInput('');
   };
 
   return (
-    <div>
+    <div id="form">
       <form onSubmit={handleSubmit}>
-        <input type="text" onChange={e => setInput(e.target.value)}></input>
+        <input
+          type="text"
+          onChange={e => setInput(e.target.value)}
+          value={input}
+          placeholder="enter symbol"
+        ></input>
         <button>submit</button>
       </form>
     </div>
