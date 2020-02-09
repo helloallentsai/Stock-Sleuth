@@ -4,6 +4,7 @@ const parser = require('body-parser');
 const app = express();
 const morgan = require('morgan');
 const axios = require('axios');
+const moment = require('moment');
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -20,6 +21,9 @@ app.get('/stocks/:stock', (req, res) => {
     const result = [];
     const entries = stock['Time Series (5min)'];
     for (let time in entries) {
+      // console.log(time);
+      // const formatTime = moment(time).format('MMM D h:mma');
+      // console.log(formatTime);
       const entry = {
         time,
         open: entries[time]['1. open'],
@@ -46,8 +50,8 @@ app.get('/stocks/:stock', (req, res) => {
           symbol: stock,
           prices
         };
-        console.log(bank);
-        console.log(bank[stock]);
+        // console.log(bank);
+        // console.log(bank[stock]);
         const result = bank[stock];
         return result;
       })
@@ -57,13 +61,9 @@ app.get('/stocks/:stock', (req, res) => {
     console.log('cached');
   }
 
-  console.log(bank);
-  console.log(bank[stock]);
+  // console.log(bank);
+  // console.log(bank[stock]);
   // res.end();
 });
 
 app.listen(port, () => console.log(`server running on port ${port}`));
-
-/*
-https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stock}&interval=5min&apikey=demo
-*/

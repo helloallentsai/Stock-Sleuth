@@ -69,7 +69,7 @@ const Chart = props => {
   };
 
   return (
-    <div>
+    <div id="chart">
       <Line data={data} width={300} height={100} options={options} />
     </div>
   );

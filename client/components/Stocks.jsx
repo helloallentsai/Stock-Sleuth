@@ -18,7 +18,7 @@ const Stocks = ({ stocks, setChartIdx }) => {
         }}
       >
         <div className="symbol">{symbol}</div>
-        <div className="current-price">{currentPrice}</div>
+        <div className="current-price">$ {currentPrice}</div>
       </div>
     );
   });
