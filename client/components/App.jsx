@@ -3,11 +3,14 @@ import axios from 'axios';
 import Form from './Form';
 import Chart from './Chart';
 import Stocks from './Stocks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearchDollar } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
   const [stocks, setStocks] = useState([]);
   const [stock, setStock] = useState('AAPL');
   const [chartIdx, setChartIdx] = useState(0);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     stock &&
@@ -16,16 +19,22 @@ const App = () => {
         .then(res => {
           const stock = res.data;
           setStocks([...stocks, stock]);
+          setError(false);
         })
-        .catch(err => console.log(err));
+        .catch(err => setError(true));
   }, [stock]);
 
   return (
     <div>
       <div id="header">
-        <h1>Stock Sleuth</h1>
+        <h1>
+          <span>Stock</span>
+          <span id="sleuth">Sleuth</span>
+          <FontAwesomeIcon icon={faSearchDollar} id="fa-icon" />
+        </h1>
       </div>
       <Form setStock={setStock} />
+      {error && <div id="error">ERROR: invalid stock symbol</div>}
       <Stocks stocks={stocks} setChartIdx={setChartIdx} />
       {stocks.length > 0 && <Chart stock={stocks[chartIdx]} />}
     </div>
