@@ -8,6 +8,7 @@ import { faSearchDollar } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
   const [stocks, setStocks] = useState([]);
+  const [stocksDaily, setStocksDaily] = useState([]);
   const [stock, setStock] = useState('AAPL');
   const [chartIdx, setChartIdx] = useState(0);
   const [error, setError] = useState(false);
@@ -21,7 +22,14 @@ const App = () => {
           setStocks([...stocks, stock]);
           setError(false);
         })
-        .catch(err => setError(true));
+        .catch(err => setError(true))
+        .then(_ => {
+          return axios.get(`/stocks/daily/${stock}`);
+        })
+        .then(res => {
+          const stockDaily = res.data;
+          setStocksDaily([...stocksDaily, stockDaily]);
+        });
   }, [stock]);
 
   return (
@@ -36,7 +44,9 @@ const App = () => {
       <Form setStock={setStock} />
       {error && <div id="error">ERROR: invalid stock symbol</div>}
       <Stocks stocks={stocks} setChartIdx={setChartIdx} />
-      {stocks.length > 0 && <Chart stock={stocks[chartIdx]} />}
+      {stocks.length > 0 && (
+        <Chart stock={stocks[chartIdx]} stocksDaily={stocksDaily[chartIdx]} />
+      )}
     </div>
   );
 };

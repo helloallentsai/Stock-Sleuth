@@ -10,6 +10,16 @@ body, button {
 
 button {
   outline: none;
+  cursor: pointer;
+  border: 0;
+  background-color: #1d1f35;
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+button:hover {
+  background-color: #3BB104;
+  color: #EDF2F4;
 }
 
 input {
@@ -98,6 +108,19 @@ input, button {
   opacity: 0;
   -webkit-animation: .3s ease-in .3s fade-up forwards;
           animation: .3s ease-in .3s fade-up forwards;
+}
+
+#chart .chart-button {
+  background-color: #1d1f35;
+  margin-top: 10px;
+  margin-right: 6px;
+  border: 0;
+  cursor: pointer;
+}
+
+#chart .chart-button:hover {
+  background-color: #3BB104;
+  color: #EDF2F4;
 }
 
 #fa-icon {
