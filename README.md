@@ -6,9 +6,9 @@ An app to track selected stock prices. After API call, charts are rendered for s
 
 ![demo](./public/demo.gif?raw=true)
 
-## Photos
+## Photo
 
-Main view with related StackOverflow articles.
+Main view with AAPL and AMZN stocks.
 
 ![main](./public/ss.png?raw=true)
 
@@ -32,5 +32,4 @@ $ npm start
 
 - ReactJS
 - NodeJS
-- MongoDB
 - Express
