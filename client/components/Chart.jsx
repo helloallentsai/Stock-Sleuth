@@ -93,11 +93,11 @@ const Chart = props => {
   return (
     <div id="chart">
       {renderView === 'day' && (
-        <Line data={data} width={300} height={100} options={options} />
+        <Line data={data} width={300} height={140} options={options} />
       )}
 
       {renderView === 'month' && (
-        <Line data={dataDay} width={300} height={100} options={optionsDay} />
+        <Line data={dataDay} width={300} height={140} options={optionsDay} />
       )}
       <button
         className="chart-button"

@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
-const StockSchema = new mongoose.Schema({
+const StockIntraSchema = new mongoose.Schema({
   symbol: String,
-  prices: []
+  prices: [],
+  timestamp: String
 });
 
-const Stock = mongoose.model('Stock', StockSchema);
+const Stock = mongoose.model('StockIntra', StockIntraSchema);
 
 module.exports = Stock;

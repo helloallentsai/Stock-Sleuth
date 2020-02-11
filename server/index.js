@@ -7,6 +7,7 @@ const axios = require('axios');
 const db = require('./db/index.js');
 const StocksIntra = require('./db/models/StocksIntra');
 const StocksDaily = require('./db/models/StocksDaily');
+const moment = require('moment');
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -47,7 +48,8 @@ app.get('/stocks/intra/:stock', (req, res) => {
 
           const entry = {
             symbol: stock,
-            prices
+            prices,
+            timestamp: moment()
           };
 
           StocksIntra.create(entry).then(data => {
@@ -57,7 +59,37 @@ app.get('/stocks/intra/:stock', (req, res) => {
         .catch(err => res.status(400).send(err));
     } else {
       console.log('cached intra');
-      res.status(200).send(dbres);
+      console.log(dbres.timestamp);
+      const previous = moment(dbres.timestamp);
+      const now = moment();
+      const diff = now.diff(previous, 'minutes');
+      console.log(diff);
+
+      if (diff > 5) {
+        console.log('update');
+        axios
+          .get(
+            `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stock}&interval=5min&apikey=${process.env.API_KEY_INTRA}`
+          )
+          .then(apiRes => {
+            const stock = apiRes.data['Meta Data']['2. Symbol'];
+            const prices = populate(apiRes.data);
+
+            const update = {
+              prices,
+              timestamp: moment()
+            };
+
+            StocksIntra.findOneAndUpdate({ symbol: stock }, update).then(
+              data => {
+                res.status(200).send(data);
+              }
+            );
+          })
+          .catch(err => res.status(400).send(err));
+      } else {
+        res.status(200).send(dbres);
+      }
     }
   });
 });
@@ -94,7 +126,8 @@ app.get('/stocks/daily/:stock', (req, res) => {
 
           const entry = {
             symbol: stock,
-            prices
+            prices,
+            timestamp: moment()
           };
 
           StocksDaily.create(entry).then(data => {
@@ -104,7 +137,37 @@ app.get('/stocks/daily/:stock', (req, res) => {
         .catch(err => res.status(400).send(err));
     } else {
       console.log('cached daily');
-      res.status(200).send(dbres);
+      console.log(dbres.timestamp);
+      const previous = moment(dbres.timestamp);
+      const now = moment();
+      const diff = now.diff(previous, 'days');
+      console.log(diff);
+
+      if (diff > 0) {
+        console.log('update');
+        axios
+          .get(
+            `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stock}&apikey=${process.env.API_KEY_DAILY}`
+          )
+          .then(apiRes => {
+            const stock = apiRes.data['Meta Data']['2. Symbol'];
+            const prices = populate(apiRes.data);
+
+            const update = {
+              prices,
+              timestamp: moment()
+            };
+
+            StocksDaily.findOneAndUpdate({ symbol: stock }, update).then(
+              data => {
+                res.status(200).send(data);
+              }
+            );
+          })
+          .catch(err => res.status(400).send(err));
+      } else {
+        res.status(200).send(dbres);
+      }
     }
   });
 });

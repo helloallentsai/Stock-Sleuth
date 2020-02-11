@@ -29,14 +29,6 @@ const App = () => {
         const stockDaily = res.data;
         setStocksDaily([...stocksDaily, stockDaily]);
       });
-
-    // .then(_ => {
-    //   return axios.get(`/stocks/daily/${stock}`);
-    // })
-    // .then(res => {
-    //   const stockDaily = res.data;
-    //   setStocksDaily([...stocksDaily, stockDaily]);
-    // });
   }, [stock]);
 
   return (
