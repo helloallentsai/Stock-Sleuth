@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 const Chart = props => {
-  console.log(props);
   const [renderView, setRenderView] = useState('day');
   const { prices, symbol } = props.stock;
 

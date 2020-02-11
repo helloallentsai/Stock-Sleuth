@@ -4,6 +4,9 @@ const parser = require('body-parser');
 const app = express();
 const morgan = require('morgan');
 const axios = require('axios');
+const db = require('./db/index.js');
+const Stocks = require('./db/models/Stocks');
+const StocksDaily = require('./db/models/StocksDaily');
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -14,7 +17,6 @@ const port = process.env.PORT || 3555;
 
 app.get('/stocks/:stock', (req, res) => {
   const stock = req.params.stock;
-  const bank = {};
 
   const populate = stock => {
     const result = [];
@@ -33,30 +35,37 @@ app.get('/stocks/:stock', (req, res) => {
     return result;
   };
 
-  if (!bank[stock]) {
-    axios
-      .get(
-        `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stock}&interval=5min&apikey=${process.env.API_KEY}`
-      )
-      .then(res => {
-        const stock = res.data['Meta Data']['2. Symbol'];
-        const prices = populate(res.data);
+  Stocks.findOne({ symbol: stock }).then(dbres => {
+    if (!dbres) {
+      axios
+        .get(
+          `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stock}&interval=5min&apikey=${process.env.API_KEY_INTRA}`
+        )
+        .then(apiRes => {
+          const stock = apiRes.data['Meta Data']['2. Symbol'];
+          const prices = populate(apiRes.data);
 
-        bank[stock] = {
-          symbol: stock,
-          prices
-        };
-        const result = bank[stock];
-        return result;
-      })
-      .then(data => res.status(200).send(data))
-      .catch(err => res.status(400).send(err));
-  }
+          const entry = {
+            symbol: stock,
+            prices
+          };
+
+          Stocks.create(entry)
+            .then(data => {
+              res.status(200).send(data);
+            })
+            .catch(err => res.status(400).send(err));
+        });
+    } else {
+      console.log('cached intra');
+      res.status(200).send(dbres);
+    }
+  });
 });
 
 app.get('/stocks/daily/:stock', (req, res) => {
   const stock = req.params.stock;
-  const bank = {};
+
   const populate = stock => {
     const result = [];
     const entries = stock['Time Series (Daily)'];
@@ -74,24 +83,32 @@ app.get('/stocks/daily/:stock', (req, res) => {
     return result;
   };
 
-  axios
-    .get(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stock}&apikey=${process.env.API_KEY}`
-    )
-    .then(res => {
-      const stock = res.data['Meta Data']['2. Symbol'];
-      const prices = populate(res.data);
+  StocksDaily.findOne({ symbol: stock }).then(dbres => {
+    if (!dbres) {
+      axios
+        .get(
+          `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stock}&apikey=${process.env.API_KEY_DAILY}`
+        )
+        .then(apiRes => {
+          const stock = apiRes.data['Meta Data']['2. Symbol'];
+          const prices = populate(apiRes.data);
 
-      bank[stock] = {
-        symbol: stock,
-        prices
-      };
+          const entry = {
+            symbol: stock,
+            prices
+          };
 
-      const result = bank[stock];
-      return result;
-    })
-    .then(data => res.status(200).send(data))
-    .catch(err => res.status(400).send(err));
+          StocksDaily.create(entry)
+            .then(data => {
+              res.status(200).send(data);
+            })
+            .catch(err => res.status(400).send(err));
+        });
+    } else {
+      console.log('cached daily');
+      res.status(200).send(dbres);
+    }
+  });
 });
 
 app.listen(port, () => console.log(`server running on port ${port}`));
