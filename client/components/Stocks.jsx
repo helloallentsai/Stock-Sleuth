@@ -2,8 +2,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
-const Stocks = ({ stocks, setChartIdx }) => {
-  stocks = stocks.map((stock, idx) => {
+const Stocks = ({ stocksIntra, setChartIdx }) => {
+  stocksIntra = stocksIntra.map((stock, idx) => {
     const { symbol } = stock;
     const currentPrice = (
       Math.round(stock.prices[0].close * 100) / 100
@@ -33,7 +33,7 @@ const Stocks = ({ stocks, setChartIdx }) => {
 
   return (
     <div>
-      <div id="stocks">{stocks}</div>
+      <div id="stocks">{stocksIntra}</div>
     </div>
   );
 };

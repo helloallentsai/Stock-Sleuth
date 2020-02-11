@@ -3,7 +3,7 @@ import { Line } from 'react-chartjs-2';
 
 const Chart = props => {
   const [renderView, setRenderView] = useState('day');
-  const { prices, symbol } = props.stock;
+  const { prices, symbol } = props.stockIntra;
 
   const prepChart = (prices, symbol, view) => {
     const timestamps = [];

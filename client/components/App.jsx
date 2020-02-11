@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearchDollar } from '@fortawesome/free-solid-svg-icons';
 
 const App = () => {
-  const [stocks, setStocks] = useState([]);
+  const [stocksIntra, setStocksIntra] = useState([]);
   const [stocksDaily, setStocksDaily] = useState([]);
   const [stock, setStock] = useState('AAPL');
   const [chartIdx, setChartIdx] = useState(0);
@@ -16,10 +16,10 @@ const App = () => {
   useEffect(() => {
     stock &&
       axios
-        .get(`/stocks/${stock}`)
+        .get(`/stocks/intra/${stock}`)
         .then(res => {
           const stock = res.data;
-          setStocks([...stocks, stock]);
+          setStocksIntra([...stocksIntra, stock]);
           setError(false);
         })
         .catch(err => setError(true));
@@ -50,9 +50,12 @@ const App = () => {
       </div>
       <Form setStock={setStock} />
       {error && <div id="error">ERROR: invalid stock symbol</div>}
-      <Stocks stocks={stocks} setChartIdx={setChartIdx} />
-      {stocks.length > 0 && (
-        <Chart stock={stocks[chartIdx]} stocksDaily={stocksDaily[chartIdx]} />
+      <Stocks stocksIntra={stocksIntra} setChartIdx={setChartIdx} />
+      {stocksIntra.length > 0 && (
+        <Chart
+          stockIntra={stocksIntra[chartIdx]}
+          stocksDaily={stocksDaily[chartIdx]}
+        />
       )}
     </div>
   );

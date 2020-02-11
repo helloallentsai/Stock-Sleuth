@@ -5,7 +5,7 @@ const app = express();
 const morgan = require('morgan');
 const axios = require('axios');
 const db = require('./db/index.js');
-const Stocks = require('./db/models/Stocks');
+const StocksIntra = require('./db/models/StocksIntra');
 const StocksDaily = require('./db/models/StocksDaily');
 
 app.use(morgan('dev'));
@@ -15,7 +15,7 @@ app.use(express.static('public'));
 
 const port = process.env.PORT || 3555;
 
-app.get('/stocks/:stock', (req, res) => {
+app.get('/stocks/intra/:stock', (req, res) => {
   const stock = req.params.stock;
 
   const populate = stock => {
@@ -35,7 +35,7 @@ app.get('/stocks/:stock', (req, res) => {
     return result;
   };
 
-  Stocks.findOne({ symbol: stock }).then(dbres => {
+  StocksIntra.findOne({ symbol: stock }).then(dbres => {
     if (!dbres) {
       axios
         .get(
@@ -50,12 +50,11 @@ app.get('/stocks/:stock', (req, res) => {
             prices
           };
 
-          Stocks.create(entry)
-            .then(data => {
-              res.status(200).send(data);
-            })
-            .catch(err => res.status(400).send(err));
-        });
+          StocksIntra.create(entry).then(data => {
+            res.status(200).send(data);
+          });
+        })
+        .catch(err => res.status(400).send(err));
     } else {
       console.log('cached intra');
       res.status(200).send(dbres);
@@ -98,12 +97,11 @@ app.get('/stocks/daily/:stock', (req, res) => {
             prices
           };
 
-          StocksDaily.create(entry)
-            .then(data => {
-              res.status(200).send(data);
-            })
-            .catch(err => res.status(400).send(err));
-        });
+          StocksDaily.create(entry).then(data => {
+            res.status(200).send(data);
+          });
+        })
+        .catch(err => res.status(400).send(err));
     } else {
       console.log('cached daily');
       res.status(200).send(dbres);
