@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 const Chart = props => {
+  console.log(props);
   const [renderView, setRenderView] = useState('day');
   const { prices, symbol } = props.stock;
 
@@ -25,17 +26,17 @@ const Chart = props => {
           fill: false,
           lineTension: 0.1,
           backgroundColor: 'rgba(100, 239, 35,0.4)',
-          borderColor: '#64EF23',
+          borderColor: '#3BB104',
           borderCapStyle: 'butt',
           borderDash: [],
           borderDashOffset: 0.0,
           borderJoinStyle: 'miter',
-          pointBorderColor: '#3BB104',
-          pointBackgroundColor: '#8D99AE',
-          pointBorderWidth: 1,
+          pointBorderColor: '#64EF23',
+          pointBackgroundColor: '#3BB104',
+          pointBorderWidth: 2,
           pointHoverRadius: 5,
           pointHoverBackgroundColor: '#3BB104',
-          pointHoverBorderColor: '#8D99AE',
+          pointHoverBorderColor: '#64EF23',
           pointHoverBorderWidth: 2,
           pointRadius: 1,
           pointHitRadius: 10,

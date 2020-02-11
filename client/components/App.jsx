@@ -22,14 +22,21 @@ const App = () => {
           setStocks([...stocks, stock]);
           setError(false);
         })
-        .catch(err => setError(true))
-        .then(_ => {
-          return axios.get(`/stocks/daily/${stock}`);
-        })
-        .then(res => {
-          const stockDaily = res.data;
-          setStocksDaily([...stocksDaily, stockDaily]);
-        });
+        .catch(err => setError(true));
+
+    stock &&
+      axios.get(`/stocks/daily/${stock}`).then(res => {
+        const stockDaily = res.data;
+        setStocksDaily([...stocksDaily, stockDaily]);
+      });
+
+    // .then(_ => {
+    //   return axios.get(`/stocks/daily/${stock}`);
+    // })
+    // .then(res => {
+    //   const stockDaily = res.data;
+    //   setStocksDaily([...stocksDaily, stockDaily]);
+    // });
   }, [stock]);
 
   return (
