@@ -2,19 +2,18 @@ require('dotenv').config();
 const express = require('express');
 const parser = require('body-parser');
 const app = express();
-const morgan = require('morgan');
-const axios = require('axios');
 const db = require('./db/index.js');
 const StocksIntra = require('./db/models/StocksIntra');
 const StocksDaily = require('./db/models/StocksDaily');
+
+const morgan = require('morgan');
+const axios = require('axios');
 const moment = require('moment');
 
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(parser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-
-const port = process.env.PORT || 3555;
 
 app.get('/stocks/intra/:stock', (req, res) => {
   const stock = req.params.stock;
@@ -45,11 +44,11 @@ app.get('/stocks/intra/:stock', (req, res) => {
         .then(apiRes => {
           const stock = apiRes.data['Meta Data']['2. Symbol'];
           const prices = populate(apiRes.data);
-
+          const timestamp = moment();
           const entry = {
             symbol: stock,
             prices,
-            timestamp: moment()
+            timestamp
           };
 
           StocksIntra.create(entry).then(data => {
@@ -58,15 +57,12 @@ app.get('/stocks/intra/:stock', (req, res) => {
         })
         .catch(err => res.status(400).send(err));
     } else {
-      console.log('cached intra');
-      console.log(dbres.timestamp);
       const previous = moment(dbres.timestamp);
       const now = moment();
       const diff = now.diff(previous, 'minutes');
-      console.log(diff);
 
       if (diff > 5) {
-        console.log('update');
+        console.log('update intra');
         axios
           .get(
             `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stock}&interval=5min&apikey=${process.env.API_KEY_INTRA}`
@@ -123,11 +119,11 @@ app.get('/stocks/daily/:stock', (req, res) => {
         .then(apiRes => {
           const stock = apiRes.data['Meta Data']['2. Symbol'];
           const prices = populate(apiRes.data);
-
+          const timestamp = moment();
           const entry = {
             symbol: stock,
             prices,
-            timestamp: moment()
+            timestamp
           };
 
           StocksDaily.create(entry).then(data => {
@@ -136,15 +132,12 @@ app.get('/stocks/daily/:stock', (req, res) => {
         })
         .catch(err => res.status(400).send(err));
     } else {
-      console.log('cached daily');
-      console.log(dbres.timestamp);
       const previous = moment(dbres.timestamp);
       const now = moment();
       const diff = now.diff(previous, 'days');
-      console.log(diff);
 
       if (diff > 0) {
-        console.log('update');
+        console.log('update day');
         axios
           .get(
             `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stock}&apikey=${process.env.API_KEY_DAILY}`
@@ -171,5 +164,7 @@ app.get('/stocks/daily/:stock', (req, res) => {
     }
   });
 });
+
+const port = process.env.PORT || 3555;
 
 app.listen(port, () => console.log(`server running on port ${port}`));
